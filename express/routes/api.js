@@ -1,19 +1,13 @@
-import { Router } from 'express';
-const router = Router();
-import cors from 'cors';
+const express = require('express');
+const router = express.Router();
 
-var corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200
-};
-
-router.get('/', cors(corsOptions), (req, res) => {
+router.get('/', (req, res) => {
     res.send([
         {name: "Jhon Doe"},
-        {name: "Emma Watson"},
         {name: "Pedro Perez"},
+        {name: "Emma Watson"},
         {name: "Emma Stone"}
     ]);
 });
 
-export default router;
+module.exports = router;
