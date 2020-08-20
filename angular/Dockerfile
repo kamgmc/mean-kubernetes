@@ -1,23 +1,20 @@
-# Create image based on the official Node 10 image from dockerhub
-FROM node:10
+# Stage 1, "build-stage", based on Node.js, to build and compile the frontend
+FROM node:10 as builder
 
-# instalar un simple servidor http para servir nuestro contenido estático
-RUN npm install -g http-server
+WORKDIR /usr/src/app
 
-# hacer la carpeta 'app' el directorio de trabajo actual
-WORKDIR /app
-
-# copiar 'package.json' y 'package-lock.json' (si están disponibles)
 COPY package*.json ./
 
-# instalar dependencias del proyecto
 RUN npm install
 
-# copiar los archivos y carpetas del proyecto al directorio de trabajo actual (es decir, la carpeta 'app')
 COPY . .
 
-# construir aplicación para producción minificada
 RUN npm run build
 
-EXPOSE 4200
-CMD [ "http-server", "dist" ]
+# Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
+FROM nginx:1.15
+#Copy ci-dashboard-dist
+COPY --from=builder /usr/src/app/dist/angular/ /usr/share/nginx/html
+
+COPY ./nginx-custom.conf /etc/nginx/conf.d/default.conf
+
