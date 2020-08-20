@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redi
+spec:
+  selector:
+    app: redi
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redi
+  template:
+    metadata:
+      labels:
+        app: redi
+    spec:
+      containers:
+        - name: express
+          image: kamgmc/express-docker:1.0
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+        - name: angular
+          image: kamgmc/angular-docker:1.2.1
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
